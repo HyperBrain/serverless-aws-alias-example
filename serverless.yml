@@ -9,13 +9,6 @@ provider:
   memorySize: 512
   timeout: 15
 
-  vpc:
-    securityGroupIds:
-      - 'Fn::ImportValue': ${self:custom.networkStack}-PrivateSG
-    subnetIds:
-      - 'Fn::ImportValue': ${self:custom.networkStack}-PrivateSubnet1
-      - 'Fn::ImportValue': ${self:custom.networkStack}-PrivateSubnet2
-
   iamRoleStatements:
     - Effect: Allow # access to API Gateway
       Action:
@@ -73,9 +66,6 @@ plugins:
 custom:
   stage: ${opt:stage, self:provider.stage}
   region: ${opt:region, self:provider.region}
-
-  # Stack names for references
-  networkStack: stashimi-${self:custom.stage}
 
   newService: ${self:}
 
