@@ -9,8 +9,32 @@ provider:
   memorySize: 512
   timeout: 15
 
+  vpc:
+    securityGroupIds:
+      - 'Fn::ImportValue': ${self:custom.networkStack}-PrivateSG
+    subnetIds:
+      - 'Fn::ImportValue': ${self:custom.networkStack}-PrivateSubnet1
+      - 'Fn::ImportValue': ${self:custom.networkStack}-PrivateSubnet2
+
   iamRoleStatements:
-    - Effect: Allow # access to DynamoDB
+    - Effect: Allow # access to API Gateway
+      Action:
+        - execute-api:Invoke
+      Resource:
+        # Allow access to our own APIs
+        - 'Fn::Join':
+          - ':'
+          -
+            - arn:aws:execute-api
+            - Ref: 'AWS::Region'
+            - Ref: 'AWS::AccountId'
+            - 'Fn::Join':
+              - '/'
+              -
+                - Ref: ApiGatewayRestApi
+                - '*/*/*'
+    - Effect: Allow
+      # access to DynamoDB
       Action:
         - dynamodb:*
       Resource:
@@ -43,11 +67,17 @@ provider:
 plugins:
   - serverless-offline
   - serverless-webpack
+  - serverless-plugin-warmup
   - serverless-aws-alias
 
 custom:
   stage: ${opt:stage, self:provider.stage}
   region: ${opt:region, self:provider.region}
+
+  # Stack names for references
+  networkStack: stashimi-${self:custom.stage}
+
+  newService: ${self:}
 
   # Stage dependent variables.
   # Usage: ${self:custom.${self:custom.stage}.<varname>}
@@ -64,38 +94,18 @@ functions:
   testfct1:
     description: 'Echo function echoes alias'
     handler: handlers/testfct1/handler.handle
+    warmup: true
     events:
       - http:
           method: GET
           path: /func1
-      - stream:
-          type: dynamodb
-          arn:
-            Fn::GetAtt:
-              - TestDynamoDbTable
-              - StreamArn
+#          authorizer:
+#            name: myAuth
+#            identitySource: method.request.header.Authorization
+#            resultTtlInSeconds: 0
+#            arn: arn:aws:lambda:us-east-1:XXXXXXX:function:profile-access-token
 
 resources:
   Resources:
 
-    TestDynamoDbTable:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: Delete
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: myKey
-            AttributeType: S
-        KeySchema:
-          - AttributeName: myKey
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES
-
   Outputs:
-    TestDynamoDbTableName:
-      Description: Test DynamoDB Table Name
-      Value:
-        Ref: TestDynamoDbTable
