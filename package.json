@@ -36,6 +36,7 @@
     "file-loader": "^0.9.0",
     "json-loader": "^0.5.4",
     "serverless": "^1.10.2",
+    "serverless-aws-alias": "^1.0.0",
     "serverless-offline": "^3.8.3",
     "serverless-webpack": "^1.0.0-rc.4",
     "url-loader": "^0.5.7",
