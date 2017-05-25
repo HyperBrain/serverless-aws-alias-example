@@ -7,7 +7,9 @@ import BbPromise from 'bluebird';
 export class Test1 {
 
 	static run(event) {
-		return BbPromise.resolve(event);
+		return BbPromise.resolve({ statusCode: 200, headers: {
+			'Content-Type': 'application/json'
+		}, body: JSON.stringify(event) });
 	}
 
 }
