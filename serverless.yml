@@ -67,8 +67,6 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   region: ${opt:region, self:provider.region}
 
-  newService: ${self:}
-
   # Stage dependent variables.
   # Usage: ${self:custom.${self:custom.stage}.<varname>}
   dev:
