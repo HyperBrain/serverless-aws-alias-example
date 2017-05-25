@@ -29,14 +29,16 @@ the branch gets deployed into the master/stage alias `dev`).
 
 ```
 git checkout master
-serverless deploy
+npm install
+node ./node_modules/serverless/bin/serverless deploy
 ```
 
 Checkout the warmup branch and deploy it to a different alias
 
 ```
 git checkout warmup-apig
-serverless deploy --alias=warmup
+npm install
+node ./node_modules/serverless/bin/serverless deploy --alias=warmup
 ```
 
 Afterwards you will have everything deployed in your AWS account. The functions
