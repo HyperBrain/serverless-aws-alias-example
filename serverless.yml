@@ -68,6 +68,7 @@ functions:
       - http:
           method: GET
           path: /func1
+      - sns: ${self:service}-topic
       - stream:
           type: dynamodb
           arn:
