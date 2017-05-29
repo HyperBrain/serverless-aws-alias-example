@@ -14,7 +14,8 @@ module.exports = {
 	entry: {
 		// Entry point is our Lambda handler function
 		'testfct1': './handlers/testfct1/handler.js',
-		'testfct2': './handlers/testfct2/handler.js'
+		'testfct2': './handlers/testfct2/handler.js',
+		'testauth': './handlers/testauth/handler.js'
 	},
 	output: {
 		libraryTarget: 'commonjs',
