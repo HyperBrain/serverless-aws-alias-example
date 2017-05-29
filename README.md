@@ -22,6 +22,11 @@ This branch can be deployed to a separate alias without destroying anything
 that is deployed on master. Branch development in master and warmup can even
 get more different over time.
 
+### sns-topic
+
+This branch adds a SNS subscription event to one of the functions. It shows how
+the alias plugin will handle these when deployed to different aliases.
+
 ### Deploying the system
 
 Checkout the master branch and deploy the stage without specifying an alias (i.e.
@@ -39,6 +44,12 @@ Checkout the warmup branch and deploy it to a different alias
 git checkout warmup-apig
 npm install
 node ./node_modules/serverless/bin/serverless deploy --alias=warmup
+```
+
+```
+git checkout sns-topic
+npm install
+node ./node_modules/serverless/bin/serverless deploy --alias=sns
 ```
 
 Afterwards you will have everything deployed in your AWS account. The functions
