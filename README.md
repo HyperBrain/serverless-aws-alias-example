@@ -27,6 +27,14 @@ get more different over time.
 This branch adds a SNS subscription event to one of the functions. It shows how
 the alias plugin will handle these when deployed to different aliases.
 
+### authorizer
+
+This branch deploys a custom authorizer and attaches it to the func1 GET method.
+You can call GET https://XXXXXXXXX.execute-api.us-east-1.amazonaws.com/auth/func1
+with an Authorization header set to an arbitrary value. The function will echo
+the incoming event object, that contains the results of the authorizer under
+`requestContext.authorizer`.
+
 ### Deploying the system
 
 Checkout the master branch and deploy the stage without specifying an alias (i.e.
