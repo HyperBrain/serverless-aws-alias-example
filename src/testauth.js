@@ -31,7 +31,7 @@ const generatePolicy = function(principalId, effect, resource) {
 export class TestAuth {
 
 	static run(event) {
-		return BbPromise.resolve(generatePolicy('user', 'Allow', event.methodArn));
+		return BbPromise.resolve(generatePolicy(`user-${process.env.SERVERLESS_ALIAS}`, 'Allow', event.methodArn));
 	}
 
 }
