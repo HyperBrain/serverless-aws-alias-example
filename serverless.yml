@@ -62,6 +62,16 @@ functions:
           aliasStage:
             loggingLevel: "OFF"
             dataTraceEnabled: false
+  testfct2:
+    description: 'Echo function echoes alias'
+    handler: handlers/testfct2/handler.handle
+    events:
+      - http:
+          method: GET
+          path: /func2
+          aliasStage:
+            loggingLevel: "OFF"
+            dataTraceEnabled: false
 
   testauth:
     description: 'A custom authorizer'
