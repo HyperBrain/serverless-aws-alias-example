@@ -3,14 +3,14 @@
  */
 "use strict";
 
-const _ = require("lodash");
+const _ = require('lodash');
+const path = require('path');
 
 const webpack = require('webpack');
 const NodeExternals = require('webpack-node-externals');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-
 
 module.exports = {
+	bail: true, // exit on any error
 	entry: {
 		// Entry point is our Lambda handler function
 		'testfct1': './handlers/testfct1/handler.js',
@@ -18,58 +18,38 @@ module.exports = {
 		'testauth': './handlers/testauth/handler.js'
 	},
 	output: {
-		libraryTarget: 'commonjs',
-		path: '.webpack',
+		libraryTarget: 'commonjs2',
+		path: path.join(__dirname, '.webpack'),
 		filename: 'handlers/[name]/handler.js', // this should match the first part of function handler in serverless.yml
 	},
 	target: 'node',
 	resolve: {
-		extensions: ['', '.js', '.jsx', '.json', '.css', '.scss']
+		extensions: ['.js', '.json']
 	},
 	devtool: process.env.LOCAL ? 'source-map' : undefined,
 	plugins: _.compact([
-		new webpack.optimize.OccurenceOrderPlugin(),
-		new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				unused: true,
-				dead_code: true,
-				warnings: false,
-				drop_debugger: true,
-			}
-		}),
-		new CopyWebpackPlugin([
-			// Copy dynamically loaded files
-			// { from: 'src/config/*.json' }
-		]),
-		// FIXME Not working on AWS Lambda but only locally :(
-		process.env.LOCAL ? new webpack.BannerPlugin(
-				'require("source-map-support").install();',
-				{ raw: true, entryOnly: false }) : null
+		new webpack.optimize.ModuleConcatenationPlugin(),
 	]),
 	externals: [
 		// We exclude all (but selected) node modules here as the serverless-webpack
 		// plugin will automatically inject them again later. This way we keep
 		// development dependencies (i.e. serverless itself) out of our deployment.
-		NodeExternals({
-			// grommet relies of .scss which needs processing before it can
-			// be deployed. Therefore we explicitly include it into our package.
-			whitelist: process.env.LOCAL ? [] : [ /^grommet/ ]
-		})
+		NodeExternals({})
 	],
 	module: {
-		loaders: [
+		rules: [
 			{
-				// Process ES6 with Babel
+				// Process ES6 with Babel.
 				test: /\.(js|jsx)$/,
-				loader: 'babel',
-				query: {
-					presets: [ "env", "stage-0", "react" ]
-				}
-			},
-			{
-				// Include JSON configuration files
-				test: /\.json$/,
-				loader: 'json'
+				use: [
+					{
+						loader: "babel-loader",
+						options: {
+							presets: [ "node6", "stage-0" ],
+							plugins: []
+						}
+					}
+				],
 			}
 		]
 	}
