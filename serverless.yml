@@ -9,6 +9,10 @@ provider:
   memorySize: 512
   timeout: 15
 
+  aliasStage:
+    loggingLevel: "INFO"
+    dataTraceEnabled: true
+
   stackTags: # Optional CF stack tags
     environment: ${opt:stage, self:provider.stage}
     application: ${self:service}
@@ -19,9 +23,6 @@ provider:
     SERVERLESS_PROJECT: ${self:service}
     SERVERLESS_STAGE: ${self:custom.stage}
     SERVERLESS_REGION: ${self:custom.region}
-    # Auth
-    TEST_TABLE_NAME:
-      Ref: TestDynamoDbTable
 
 plugins:
   - serverless-offline
@@ -55,6 +56,12 @@ functions:
             name: testauth
             resultTtlInSeconds: '0'
             identitySource: method.request.header.Authorization
+      - http:
+          method: POST
+          path: /func1/update
+          aliasStage:
+            loggingLevel: "OFF"
+            dataTraceEnabled: false
 
   testauth:
     description: 'A custom authorizer'
