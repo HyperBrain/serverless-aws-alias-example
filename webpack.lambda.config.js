@@ -13,8 +13,7 @@ module.exports = {
 	bail: true, // exit on any error
 	entry: {
 		// Entry point is our Lambda handler function
-		'testfct1': './handlers/testfct1/handler.js',
-		'testfct2': './handlers/testfct2/handler.js'
+		'testfct1': './handlers/testfct1/handler.js'
 	},
 	output: {
 		libraryTarget: 'commonjs2',
